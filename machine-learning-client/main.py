@@ -26,14 +26,14 @@ def analyze_mood_from_image(image_path):
         b64_image = base64.b64encode(f.read()).decode("utf-8")
 
     data = {
-        "model": "gpt-4-vision-preview",
+        "model": "gpt-4o",
         "messages": [
             {
                 "role": "user",
                 "content": [
                     {
                         "type": "text",
-                        "text": "Analyze the mood or emotion this person is expressing based on their face. Respond with 1–2 sentences describing how they appear to feel."
+                        "text": "Analyze the mood or emotion this person is expressing based on their face. Respond with 1–2 sentences describing how they feel."
                     },
                     {
                         "type": "image_url",
