@@ -14,7 +14,7 @@ from app import app, allowed_file  # pylint: disable=wrong-import-position
 
 
 @pytest.fixture
-def client():
+def client_instance():
     """Fixture for testing the Flask app."""
     # Enable testing mode.
     app.config["TESTING"] = True
@@ -55,9 +55,7 @@ def test_index_post_success(mock_insert_one, mock_requests_post, client_instance
 
     # Simulate an image file upload.
     data = {"image": (io.BytesIO(b"fake image data"), "test.jpg")}
-    response = client_instance.post(
-        "/", data=data, content_type="multipart/form-data", follow_redirects=False
-    )
+    response = client_instance.post("/", data=data, content_type="multipart/form-data", follow_redirects=False)
     # Expect a redirect after processing.
     assert response.status_code == 302
 
