@@ -1,5 +1,4 @@
-
-version: '3'
+version: "3"
 
 services:
   mongo:
@@ -21,6 +20,8 @@ services:
 
   ml-client:
     build: ./machine-learning-client
+    ports:
+      - "5001:5001"
     volumes:
       - shared_data:/shared/uploads
     depends_on:

@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        subdir: [ web-app, machine-learning-client ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+
+      - name: Install pipenv
+        run: pip install pipenv
+
+      - name: Install dependencies
+        run: pipenv install --dev
+        working-directory: ${{ matrix.subdir }}
+
+      - name: Run tests
+        run: pipenv run pytest --maxfail=1 --disable-warnings -q
+        working-directory: ${{ matrix.subdir }}
+
+      - name: Run coverage
+        working-directory: ${{ matrix.subdir }}
+        run: |
+          pipenv run coverage run -m pytest
+          pipenv run coverage report --fail-under=80
+        
