@@ -1,5 +1,5 @@
-```markdown
 [![Web App CI](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/lint.yml/badge.svg)](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/lint.yml)
+
 [![ML Client CI](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/lint.yml/badge.svg)](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/lint.yml)
 
 # Containerized App Exercise
