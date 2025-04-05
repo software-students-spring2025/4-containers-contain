@@ -1,16 +1,18 @@
-import os
+"""
+Module tests for the machine learning client.
+This module tests the analyze_mood_from_image function.
+"""
 
-import requests
-import sys
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-from app import app, analyze_mood_from_image
+from app import analyze_mood_from_image
 
 
 def test_file_not_found():
+    """
+    Test that analyzing a nonexistent image file returns an error response.
+    """
     result = analyze_mood_from_image("nonexistent.jpg")
-    assert result == {"emotion": "error", "explanation": "Image file not found."}
+    expected = {"emotion": "error", "explanation": "Image file not found."}
+    assert result == expected
 
 
-# TODO -- add more tests for analyze_mood_from_image function
+# TODO: Add more tests for the analyze_mood_from_image function.
