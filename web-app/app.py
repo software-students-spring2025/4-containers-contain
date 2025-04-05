@@ -45,7 +45,8 @@ def index():
             file.save(filepath)
             # Include a timeout to prevent hanging indefinitely.
             try:
-                response = requests.post("http://ml-client:5001/analyze", json={"filename": filename}, timeout=10)
+                response = requests.post("http://ml-client:5001/analyze",
+                                         json={"filename": filename}, timeout=10)
                 response.raise_for_status()
                 result = response.json()
             except requests.RequestException as e:

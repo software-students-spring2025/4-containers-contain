@@ -34,9 +34,15 @@ def analyze_mood_from_image(image_path):
     try:
         with open(image_path, "rb") as f:
             b64_image = base64.b64encode(f.read()).decode("utf-8")
-    except Exception as e:
-        logging.error("Failed to read image %s: %s", image_path, e)
-        return {"emotion": "error", "explanation": "Unable to read image file."}
+    except FileNotFoundError as e:
+        logging.error("Image file not found: %s", image_path)
+        return {"emotion": "error", "explanation": "Image file not found."}
+    except PermissionError as e:
+        logging.error("Permission denied for image file: %s", image_path)
+        return {"emotion": "error", "explanation": "Permission denied to access the image file."}
+    except OSError as e:
+        logging.error("OS error reading image %s: %s", image_path, e)
+        return {"emotion": "error", "explanation": "Unable to read image file due to an OS error."}
 
     prompt_text = (
         "Analyze the facial expression in the provided image. "
@@ -71,7 +77,8 @@ def analyze_mood_from_image(image_path):
         "max_tokens": 150,
     }
     try:
-        response = requests.post("https://api.openai.com/v1/chat/completions", headers=HEADERS, json=data, timeout=10)
+        response = requests.post("https://api.openai.com/v1/chat/completions",
+                                 headers=HEADERS, json=data, timeout=10)
         response.raise_for_status()
         result = response.json()
         raw_output = result["choices"][0]["message"]["content"].strip()
