@@ -27,7 +27,7 @@ jobs:
         # you may set pylint to ignore any files or dependencies that make no sense to lint
         run: |
           cd ${{ matrix.subdir }}
-          pipenv run pylint --disable=E0401 **/*.py
+          pipenv run pylint --disable=E0401,W0511 **/*.py
       - name: Format with black
         if: ${{ hashFiles(format('{0}/**/*.py', matrix.subdir)) != '' }}
         # you may set black to ignore any files or dependencies that make no sense to format

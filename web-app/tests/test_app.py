@@ -20,33 +20,6 @@ def fake_post_success(*args, **kwargs):
     return FakeResponse()
 
 
-def fake_post_invalid_json(*args, **kwargs):
-    class FakeResponse:
-        def raise_for_status(self):
-            pass
-
-        def json(self):
-            return {"choices": [{"message": {"content": "Not a valid JSON string"}}]}
-
-    return FakeResponse()
-
-
-def fake_post_incomplete(*args, **kwargs):
-    class FakeResponse:
-        def raise_for_status(self):
-            pass
-
-        def json(self):
-            # Missing required keys in the returned JSON
-            return {"choices": [{"message": {"content": '{"unexpected_key": "value"}'}}]}
-
-    return FakeResponse()
-
-
-def fake_post_exception(*args, **kwargs):
-    raise requests.RequestException("API error")
-
-
 @pytest.fixture
 def client(monkeypatch):
     # Create a temporary directory for file uploads.
