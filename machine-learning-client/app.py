@@ -18,8 +18,13 @@ UPLOAD_FOLDER = "/shared/uploads"
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
-HEADERS = {"Authorization": f"Bearer {OPENAI_API_KEY}", "Content-Type": "application/json"}
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
+)
+HEADERS = {
+    "Authorization": f"Bearer {OPENAI_API_KEY}",
+    "Content-Type": "application/json",
+}
 
 
 def analyze_mood_from_image(image_path):
@@ -71,27 +76,40 @@ def analyze_mood_from_image(image_path):
         "max_tokens": 150,
     }
     try:
-        response = requests.post("https://api.openai.com/v1/chat/completions",
-                                 headers=HEADERS, json=data, timeout=10)
+        response = requests.post(
+            "https://api.openai.com/v1/chat/completions",
+            headers=HEADERS,
+            json=data,
+            timeout=10,
+        )
         response.raise_for_status()
         result = response.json()
         raw_output = result["choices"][0]["message"]["content"].strip()
         logging.info("GPT raw response: %s", raw_output)
         if raw_output.startswith("```"):
-            raw_output = re.sub(r'^```(?:json)?\s*', '', raw_output)
-            raw_output = re.sub(r'\s*```$', '', raw_output)
+            raw_output = re.sub(r"^```(?:json)?\s*", "", raw_output)
+            raw_output = re.sub(r"\s*```$", "", raw_output)
         try:
             analysis = json.loads(raw_output)
             if "emotion" in analysis and "explanation" in analysis:
                 return analysis
             logging.error("Response JSON missing required keys: %s", analysis)
-            return {"emotion": "error", "explanation": "Incomplete response from analysis."}
+            return {
+                "emotion": "error",
+                "explanation": "Incomplete response from analysis.",
+            }
         except json.JSONDecodeError:
             logging.error("Failed to parse JSON from GPT response.")
-            return {"emotion": "error", "explanation": "Response could not be parsed as JSON."}
+            return {
+                "emotion": "error",
+                "explanation": "Response could not be parsed as JSON.",
+            }
     except requests.RequestException as e:
         logging.error("Failed to analyze image %s: %s", image_path, e)
-        return {"emotion": "error", "explanation": "Unable to analyze mood due to an API error."}
+        return {
+            "emotion": "error",
+            "explanation": "Unable to analyze mood due to an API error.",
+        }
 
 
 @app.route("/analyze", methods=["POST"])
