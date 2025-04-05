@@ -22,6 +22,8 @@ UPLOAD_FOLDER = "/shared/uploads"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
 
 app = Flask(__name__)
+UPLOAD_FOLDER = os.environ.get("UPLOAD_FOLDER", "/shared/uploads")
+
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
