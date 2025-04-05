@@ -1,11 +1,10 @@
 import os
-import io
 import sys
 import tempfile
 import pytest
 import requests
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from app import app
 
