@@ -1,11 +1,17 @@
-from flask import Flask, request, jsonify
+"""
+Machine Learning Client for Mood Detector.
+This module exposes an API endpoint to analyze images and detect emotion using the OpenAI API.
+"""
+
 import os
 import base64
 import json
 import logging
-import requests
 import re
+
+from flask import Flask, request, jsonify
 from dotenv import load_dotenv
+import requests
 
 app = Flask(__name__)
 UPLOAD_FOLDER = "/shared/uploads"
@@ -17,6 +23,14 @@ HEADERS = {"Authorization": f"Bearer {OPENAI_API_KEY}", "Content-Type": "applica
 
 
 def analyze_mood_from_image(image_path):
+    """Analyze mood from an image using the OpenAI API.
+
+    Args:
+        image_path (str): The path to the image file.
+
+    Returns:
+        dict: Analysis result with keys 'emotion' and 'explanation'.
+    """
     try:
         with open(image_path, "rb") as f:
             b64_image = base64.b64encode(f.read()).decode("utf-8")
@@ -26,11 +40,16 @@ def analyze_mood_from_image(image_path):
 
     prompt_text = (
         "Analyze the facial expression in the provided image. "
-        "Return your result as a JSON object with two keys: 'emotion' and 'explanation'. "
-        "'emotion' should be a single word (e.g., 'happy', 'sad', 'angry') representing the dominant emotion. "
-        "'explanation' should be a one-sentence explanation of how you arrived at that conclusion. "
-        "If the image does not contain a clear single face—either because no face is present or multiple faces are present—"
-        "return 'none' as the emotion and include an explanation stating that the analysis was ambiguous."
+        "Return your result as a JSON object with two keys: 'emotion' and "
+        "'explanation'. "
+        "'emotion' should be a single word (e.g., 'happy', 'sad', 'angry') repre"
+        "senting the dominant emotion. "
+        "'explanation' should be a one-sentence explanation of how you arrived "
+        "at that conclusion. "
+        "If the image does not contain a clear single face—either because no face"
+        " is present or multiple faces are present—"
+        "return 'none' as the emotion and include an explanation stating that t"
+        "he analysis was ambiguous."
     )
     data = {
         "model": "gpt-4o",
@@ -39,14 +58,20 @@ def analyze_mood_from_image(image_path):
                 "role": "user",
                 "content": [
                     {"type": "text", "text": prompt_text},
-                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{b64_image}"}},
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;\
+                                                        base64,{b64_image}"
+                        },
+                    },
                 ],
             }
         ],
         "max_tokens": 150,
     }
     try:
-        response = requests.post("https://api.openai.com/v1/chat/completions", headers=HEADERS, json=data)
+        response = requests.post("https://api.openai.com/v1/chat/completions", headers=HEADERS, json=data, timeout=10)
         response.raise_for_status()
         result = response.json()
         raw_output = result["choices"][0]["message"]["content"].strip()
@@ -58,19 +83,19 @@ def analyze_mood_from_image(image_path):
             analysis = json.loads(raw_output)
             if "emotion" in analysis and "explanation" in analysis:
                 return analysis
-            else:
-                logging.error("Response JSON missing required keys: %s", analysis)
-                return {"emotion": "error", "explanation": "Incomplete response from analysis."}
+            logging.error("Response JSON missing required keys: %s", analysis)
+            return {"emotion": "error", "explanation": "Incomplete response from analysis."}
         except json.JSONDecodeError:
             logging.error("Failed to parse JSON from GPT response.")
             return {"emotion": "error", "explanation": "Response could not be parsed as JSON."}
-    except Exception as e:
+    except requests.RequestException as e:
         logging.error("Failed to analyze image %s: %s", image_path, e)
         return {"emotion": "error", "explanation": "Unable to analyze mood due to an API error."}
 
 
 @app.route("/analyze", methods=["POST"])
 def analyze_endpoint():
+    """API endpoint to analyze the image for mood detection."""
     data = request.get_json()
     filename = data.get("filename")
     if not filename:
