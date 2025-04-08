@@ -4,74 +4,177 @@
     <meta charset="utf-8" />
     <title>Mood Detector</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f5f5f5;
-        margin: 0;
-        padding: 20px;
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+      :root {
+        --primary: #6c63ff;
+        --secondary: #4d44db;
+        --light: #f8f9fa;
+        --dark: #212529;
+        --success: #28a745;
+        --danger: #dc3545;
       }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        margin: 0;
+        padding: 40px 20px;
+        color: var(--dark);
+      }
+  
       .container {
         max-width: 800px;
-        margin: auto;
-        background: #fff;
-        padding: 30px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border-radius: 16px;
+        backdrop-filter: blur(5px);
+        transition: all 0.3s ease;
       }
-      h1,
-      h2 {
-        text-align: center;
-        color: #333;
+
+      .container:hover {
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
       }
-      form {
+
+      h1, h2 {
         text-align: center;
+        color: var(--primary);
         margin-bottom: 30px;
       }
-      input[type="file"] {
-        margin: 10px 0;
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
       }
-      input[type="submit"] {
-        padding: 8px 16px;
-        background-color: #4285f4;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
+
+      h2 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-top: 40px;
+      }
+
+      form {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .file-input-wrapper {
+        position: relative;
+        display: inline-block;
+        margin: 20px 0;
+      }
+
+      .file-input-wrapper input[type="file"] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
         cursor: pointer;
       }
-      input[type="submit"]:hover {
-        background-color: #357ae8;
+
+      .file-input-label {
+        display: inline-block;
+        padding: 12px 24px;
+        background: var(--primary);
+        color: white;
+        border-radius: 50px;
+        font-weight: 500;
+        transform: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
+
+      .file-input-label:hover {
+        background: var(--secondary);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      input[type="submit"] {
+        padding: 12px 30px;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      input[type="submit"]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+      }
+
       ul {
         list-style: none;
         padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
       }
+
       li {
-        margin-bottom: 20px;
-        padding: 15px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        background: #fafafa;
+        margin-bottom: 0px;
+        padding: 20px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        background: white;
+        transition: all 0.3s ease;
       }
+
+      li:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+
       img {
         display: block;
-        margin: 0 auto;
+        margin: 0 auto 15px;
         max-width: 100%;
         height: auto;
-        border-radius: 5px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
+
       .analysis {
-        margin-top: 10px;
+        margin-top: 15px;
         text-align: center;
       }
+
       .emotion {
-        font-weight: bold;
-        font-size: 1.2em;
-        color: #444;
+        font-weight: 600;
+        font-size: 1.3rem;
+        color: var(--primary);
+        margin-bottom: 5px;
       }
+
       .explanation {
         font-size: 0.95em;
         color: #666;
-        margin-top: 5px;
+        line-height: 1.5;
+      }
+
+      .template-var {
+        position: relative;
+      }
+      .template-var::before, .template-var::after {
+        display: none;
       }
     </style>
   </head>
@@ -94,8 +197,8 @@
             alt="Uploaded Image"
           />
           <div class="analysis">
-            <div class="emotion">Emotion: {{ item.emotion }}</div>
-            <div class="explanation">Explanation: {{ item.explanation }}</div>
+            <div class="emotion">Emotion: <span class="template-var">{{ item.emotion }}</span></div>
+            <div class="explanation">Explanation: <span class="template-var">{{ item.explanation }}</span></div>
           </div>
         </li>
         {% endfor %}
