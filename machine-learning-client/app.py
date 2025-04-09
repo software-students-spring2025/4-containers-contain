@@ -18,9 +18,7 @@ UPLOAD_FOLDER = "/shared/uploads"
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 HEADERS = {
     "Authorization": f"Bearer {OPENAI_API_KEY}",
     "Content-Type": "application/json",
@@ -65,10 +63,7 @@ def analyze_mood_from_image(image_path):
                     {"type": "text", "text": prompt_text},
                     {
                         "type": "image_url",
-                        "image_url": {
-                            "url": f"data:image/jpeg;\
-                                                        base64,{b64_image}"
-                        },
+                        "image_url": {"url": f"data:image/jpeg;base64,{b64_image}"},
                     },
                 ],
             }
