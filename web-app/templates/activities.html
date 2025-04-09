@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Activity Suggestions</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap");
+
+      :root {
+        --primary: #6c63ff;
+        --secondary: #4d44db;
+        --light: #f8f9fa;
+        --dark: #212529;
+        --success: #28a745;
+        --danger: #dc3545;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 20px;
+      }
+
+      .container {
+        background: white;
+        border-radius: 16px;
+        padding: 40px;
+        max-width: 700px;
+        width: 100%;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 2rem;
+        color: var(--primary);
+        margin-bottom: 20px;
+      }
+
+      .buttons {
+        margin: 20px 0;
+      }
+
+      button {
+        padding: 12px 24px;
+        margin: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 50px;
+        background: var(--primary);
+        color: white;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      button:hover {
+        background: var(--secondary);
+      }
+
+      .results {
+        margin-top: 30px;
+        text-align: left;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: var(--dark);
+      }
+
+      .results p {
+        margin-bottom: 12px;
+      }
+      .back-link {
+      display: inline-block;
+      margin-top: 30px;
+      font-size: 0.95rem;
+      color: var(--secondary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+      }
+
+      .back-link:hover {
+        text-decoration: underline;
+        color: var(--primary);
+      }
+
+      .results ul {
+      padding-left: 20px;
+      list-style-type: disc;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Let's find you a mood-boosting activity!</h1>
+      <p>Choose a category below:</p>
+
+      <div class="buttons">
+        <button onclick="fetchActivities('social')">Social Activities</button>
+        <button onclick="fetchActivities('physical')">Physical Activities</button>
+      </div>
+
+      <div id="results" class="results"></div>
+      <a href="/" class="back-link">← Back to Mood Detector</a>
+    </div>
+
+    <script>
+      const emotion = "{{ emotion }}"; // Comes from the query parameter in Flask
+
+      async function fetchActivities(category) {
+        const response = await fetch("/get-activities", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ emotion, category }),
+        });
+
+        const data = await response.json();
+        const output = document.getElementById("results");
+
+        const activitiesList = data.activities
+        .split("\n")
+        .filter(line => line.trim())
+        .map(item => `<li>${item}</li>`)
+        .join("");
+        output.innerHTML = `
+          <h3>Here are some ideas:</h3>
+          <ul>${activitiesList}</ul>
+        `;
+        output.scrollIntoView({ behavior: "smooth" });
+      }
+    </script>
+  </body>
+</html>

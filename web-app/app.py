@@ -71,6 +71,26 @@ def index():
     results = list(collection.find().sort("timestamp", -1).limit(10))
     return render_template("index.html", moods=results)
 
+@app.route("/activities")
+def activities():
+    emotion = request.args.get("emotion", "neutral")
+    return render_template("activities.html", emotion=emotion)
+
+@app.route("/get-activities", methods=["POST"])
+def proxy_get_activities():
+    """Proxy the activity suggestion request to the ML client."""
+    try:
+        response = requests.post(
+            "http://ml-client:5001/get-activities",
+            json=request.get_json(),
+            timeout=30
+        )
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException as e:
+        return {"activities": f"Failed to retrieve activities: {str(e)}"}, 500
+
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
