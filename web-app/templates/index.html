@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <title>Mood Detector</title>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap");
 
       :root {
         --primary: #6c63ff;
@@ -22,14 +22,14 @@
       }
 
       body {
-        font-family: 'Poppins', sans-serif;
+        font-family: "Poppins", sans-serif;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         min-height: 100vh;
         margin: 0;
         padding: 40px 20px;
         color: var(--dark);
       }
-  
+
       .container {
         max-width: 800px;
         margin: 0 auto;
@@ -45,7 +45,8 @@
         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
       }
 
-      h1, h2 {
+      h1,
+      h2 {
         text-align: center;
         color: var(--primary);
         margin-bottom: 30px;
@@ -173,7 +174,8 @@
       .template-var {
         position: relative;
       }
-      .template-var::before, .template-var::after {
+      .template-var::before,
+      .template-var::after {
         display: none;
       }
     </style>
@@ -197,8 +199,17 @@
             alt="Uploaded Image"
           />
           <div class="analysis">
-            <div class="emotion">Emotion: <span class="template-var">{{ item.emotion }}</span></div>
-            <div class="explanation">Explanation: <span class="template-var">{{ item.explanation }}</span></div>
+            <div class="emotion">
+              Emotion: <span class="template-var">{{ item.emotion }}</span>
+            </div>
+            <div class="explanation">
+              Explanation:
+              <span class="template-var">{{ item.explanation }}</span>
+            </div>
+            <div class="explanation">
+              Recommendation:
+              <span class="template-var">{{ item.recommendation }}</span>
+            </div>
           </div>
         </li>
         {% endfor %}
