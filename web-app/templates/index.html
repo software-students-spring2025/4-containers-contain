@@ -178,11 +178,32 @@
       .template-var::after {
         display: none;
       }
+      .details {
+      margin-top: 10px;
+      font-size: 0.95em;
+      color: #666;
+      line-height: 1.5;
+      text-align: left;
+      padding: 0 5px;
+      }
+
+      .details p {
+        margin-bottom: 10px;
+      }
+      .activity-link {
+      color: var(--primary);
+      font-weight: 500;
+      text-decoration: none;
+      }
+
+      .activity-link:hover {
+        text-decoration: underline;
+      }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>Mood Detector</h1>
+      <h1>Mood Helper</h1>
 
       <form action="/" method="post" enctype="multipart/form-data">
         <input type="file" name="image" required />
@@ -200,20 +221,18 @@
           />
           <div class="analysis">
             <div class="emotion">
-              Emotion: <span class="template-var">{{ item.emotion }}</span>
+              Feeling: <span class="template-var">{{ item.emotion }}</span>
             </div>
-            <div class="explanation">
-              <strong>Explanation:</strong>
-              <span class="template-var">{{ item.explanation }}</span>
+            <div class="details">
+              <p><strong>Explanation:</strong> <span class="template-var">{{ item.explanation }}</span></p>
+              <p>
+                <strong>Recommendation:</strong> <span class="template-var">{{ item.recommendation }}</span>
+                <a href="{{ url_for('activities', emotion=item.emotion) }}" class="activity-link">
+                  Want more activity ideas? Click here →
+                </a>
+              </p>
             </div>
-            <div class="explanation">
-              <strong>Recommendation:</strong>
-              <span class="template-var">{{ item.recommendation }}</span>
-              <a href="{{ url_for('activities', emotion=item.emotion) }}" class="activity-link">
-                Want activity ideas? Click here →
-              </a>
-            </div>
-          </div>
+          </div>          
         </li>
         {% endfor %}
       </ul>

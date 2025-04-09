@@ -118,26 +118,27 @@
       const emotion = "{{ emotion }}"; // Comes from the query parameter in Flask
 
       async function fetchActivities(category) {
-        const response = await fetch("/get-activities", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ emotion, category }),
-        });
+      const response = await fetch("/get-activities", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ emotion, category }),
+      });
 
-        const data = await response.json();
-        const output = document.getElementById("results");
+      const data = await response.json();
+      const output = document.getElementById("results");
 
-        const activitiesList = data.activities
+      const activitiesList = data.activities
         .split("\n")
         .filter(line => line.trim())
         .map(item => `<li>${item}</li>`)
         .join("");
-        output.innerHTML = `
-          <h3>Here are some ideas:</h3>
-          <ul>${activitiesList}</ul>
-        `;
-        output.scrollIntoView({ behavior: "smooth" });
-      }
+
+      output.innerHTML = `
+        <h3>${data.intro}</h3>
+        <ul>${activitiesList}</ul>
+      `;
+      output.scrollIntoView({ behavior: "smooth" });
+    }
     </script>
   </body>
 </html>
