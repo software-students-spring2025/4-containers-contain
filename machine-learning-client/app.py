@@ -32,28 +32,26 @@ def analyze_mood_from_image(image_path):
         image_path (str): The path to the image file.
 
     Returns:
-        dict: Analysis result with keys 'emotion' and 'explanation'.
+        dict: Analysis result with keys 'emotion', 'explanation', and 'recommendation'.
     """
     try:
         with open(image_path, "rb") as f:
             b64_image = base64.b64encode(f.read()).decode("utf-8")
     except FileNotFoundError:
         logging.error("Image file not found: %s", image_path)
-        return {"emotion": "error", "explanation": "Image file not found."}
+        return {"emotion": "error", "explanation": "Image file not found.", "recommendation": ""}
 
     prompt_text = (
         "Analyze the facial expression in the provided image. "
-        "Return your result as a JSON object with two keys: 'emotion' and "
-        "'explanation'. "
-        "'emotion' should be a single word (e.g., 'happy', 'sad', 'angry') repre"
-        "senting the dominant emotion. "
-        "'explanation' should be a one-sentence explanation of how you arrived "
-        "at that conclusion. "
-        "If the image does not contain a clear single face—either because no face"
-        " is present or multiple faces are present—"
-        "return 'none' as the emotion and include an explanation stating that t"
-        "he analysis was ambiguous."
+        "Return your result as a JSON object with three keys: 'emotion', 'explanation', and 'recommendation'. "
+        "'emotion' should be a single word (e.g., 'happy', 'sad', 'angry') representing the dominant emotion. "
+        "'explanation' should be a one-sentence explanation of how you arrived at that conclusion. "
+        "'recommendation' should be a one-sentence suggestion based on the mood detected. "
+        "If the image does not contain a clear single face—either because no face is present or multiple faces are present—"
+        "return 'none' as the emotion, include an explanation stating that the analysis was ambiguous, "
+        "and set the recommendation to 'no recommendation'."
     )
+
     data = {
         "model": "gpt-4o",
         "messages": [
@@ -70,12 +68,13 @@ def analyze_mood_from_image(image_path):
         ],
         "max_tokens": 150,
     }
+
     try:
         response = requests.post(
             "https://api.openai.com/v1/chat/completions",
             headers=HEADERS,
             json=data,
-            timeout=10,
+            timeout=150,
         )
         response.raise_for_status()
         result = response.json()
@@ -86,25 +85,16 @@ def analyze_mood_from_image(image_path):
             raw_output = re.sub(r"\s*```$", "", raw_output)
         try:
             analysis = json.loads(raw_output)
-            if "emotion" in analysis and "explanation" in analysis:
+            if "emotion" in analysis and "explanation" in analysis and "recommendation" in analysis:
                 return analysis
             logging.error("Response JSON missing required keys: %s", analysis)
-            return {
-                "emotion": "error",
-                "explanation": "Incomplete response from analysis.",
-            }
+            return {"emotion": "error", "explanation": "Incomplete response from analysis.", "recommendation": ""}
         except json.JSONDecodeError:
             logging.error("Failed to parse JSON from GPT response.")
-            return {
-                "emotion": "error",
-                "explanation": "Response could not be parsed as JSON.",
-            }
+            return {"emotion": "error", "explanation": "Response could not be parsed as JSON.", "recommendation": ""}
     except requests.RequestException as e:
         logging.error("Failed to analyze image %s: %s", image_path, e)
-        return {
-            "emotion": "error",
-            "explanation": "Unable to analyze mood due to an API error.",
-        }
+        return {"emotion": "error", "explanation": "Unable to analyze mood due to an API error.", "recommendation": ""}
 
 
 @app.route("/analyze", methods=["POST"])
