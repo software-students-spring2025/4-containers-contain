@@ -96,6 +96,20 @@ def analyze_mood_from_image(image_path):
         logging.error("Failed to analyze image %s: %s", image_path, e)
         return {"emotion": "error", "explanation": "Unable to analyze mood due to an API error.", "recommendation": ""}
 
+def call_chatgpt_api(prompt):
+    response = requests.post(
+        "https://api.openai.com/v1/chat/completions",
+        headers={
+            "Authorization": f"Bearer {os.getenv('OPENAI_API_KEY')}",
+            "Content-Type": "application/json"
+        },
+        json={
+            "model": "gpt-4o",
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.7,
+        },
+    )
+    return response.json()["choices"][0]["message"]["content"]
 
 @app.route("/analyze", methods=["POST"])
 def analyze_endpoint():
@@ -107,6 +121,22 @@ def analyze_endpoint():
     image_path = os.path.join(UPLOAD_FOLDER, filename)
     result = analyze_mood_from_image(image_path)
     return jsonify(result)
+
+@app.route("/get-activities", methods=["POST"])
+def get_activities():
+    data = request.json
+    emotion = data.get("emotion", "neutral")
+    category = data.get("category", "social")
+
+    prompt = f"""
+    Suggest 3 {category.lower()} activities for someone who feels {emotion}.
+    Keep each suggestion under 15 words and include a fun emoji for each one.
+    Return them as a numbered list with no extra explanation.
+    """
+
+    # Call OpenAI API here
+    suggestions = call_chatgpt_api(prompt)
+    return jsonify({"activities": suggestions})
 
 
 if __name__ == "__main__":

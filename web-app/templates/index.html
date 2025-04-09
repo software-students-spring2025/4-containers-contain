@@ -203,12 +203,15 @@
               Emotion: <span class="template-var">{{ item.emotion }}</span>
             </div>
             <div class="explanation">
-              Explanation:
+              <strong>Explanation:</strong>
               <span class="template-var">{{ item.explanation }}</span>
             </div>
             <div class="explanation">
-              Recommendation:
+              <strong>Recommendation:</strong>
               <span class="template-var">{{ item.recommendation }}</span>
+              <a href="{{ url_for('activities', emotion=item.emotion) }}" class="activity-link">
+                Want activity ideas? Click here →
+              </a>
             </div>
           </div>
         </li>
