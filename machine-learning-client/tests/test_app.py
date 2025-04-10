@@ -3,10 +3,19 @@ Module tests for the machine learning client.
 This module tests the analyze_mood_from_image function.
 """
 
-import app
+import os
+import pytest
+from unittest.mock import patch
+import requests
+from app import analyze_mood_from_image
 
 
 def test_file_not_found():
+    """
+    Test that analyzing a nonexistent image file returns an error response.
+    """
+    result = analyze_mood_from_image("nonexistent.jpg")
+    expected = {"emotion": "error", "explanation": "Image file not found.", "recommendation": ""}
     """Test that analyzing a nonexistent image file returns an error response."""
     result = app.analyze_mood_from_image("nonexistent.jpg")
     expected = {
@@ -17,31 +26,143 @@ def test_file_not_found():
     assert result == expected
 
 
-def test_empty_file_path():
-    """Test analyzing with an empty file path returns an error."""
-    result = app.analyze_mood_from_image("")
+# TODO: Add more tests for the analyze_mood_from_image function.
+
+@pytest.fixture
+def test_image_path():
+    """
+    Fixture to get the path of the test image. Will be used by other tests.
+    """
+    return os.path.join(os.path.dirname(__file__), 'happy-guy.jpg')
+
+@patch("app.requests.post")
+def test_valid_image(mock_post, test_image_path):
+    """
+    Test that a valid image returns correct analysis.
+    """
+    
+    # mock response from API
+    mock_response = {
+        "choices": [{
+            "message": {
+                "content": '{"emotion": "happy", "explanation": "The person is smiling", "recommendation": "Listen to uplifting music"}'
+            }
+        }]
+    }
+    mock_post.return_value.json.return_value = mock_response
+    result = analyze_mood_from_image(test_image_path)
+    
+    # assert that required keys exist
+    assert "emotion" in result
+    assert "explanation" in result
+    assert "recommendation" in result
+    
+    # assert that results include key words
+    assert "happy" in result["emotion"]
+    assert "smiling" in result["explanation"] or "smile" in result["explanation"]
+    
+    # assert that the recommendation is a string (recommendations will not always be the same so impossible to check for specifics)
+    assert isinstance(result["recommendation"], str)
+    assert len(result["recommendation"]) > 0
+
+@patch("app.requests.post")
+def test_no_face(mock_post, test_image_path):
+    """
+    Test when an image contains no faces.
+    """
+
+    mock_response = {
+        "choices": [{
+            "message": {
+                "content": '{"emotion": "none", "explanation": "No clear face detected, ambiguous analysis", "recommendation": "No recommendation."}'
+            }
+        }]
+    }
+    mock_post.return_value.json.return_value = mock_response
+
+    result = analyze_mood_from_image(test_image_path)
+
+    # assert that required keys exist
+    assert "emotion" in result
+    assert "explanation" in result
+    assert "recommendation" in result
+
+    # assert that responses align with the one provided in the prompt
+    assert result["emotion"] == "none"
+    assert "ambiguous" in result["explanation"].lower()
+    assert "no recommendation." in result["recommendation"].lower()
+
+@patch("app.requests.post")
+def test_many_faces(mock_post, test_image_path):
+    """
+    Test when an image contains multiple faces.
+    """
+
+    mock_response = {
+        "choices": [{
+            "message": {
+                "content": '{"emotion": "none", "explanation": "Multiple faces detected, ambiguous analysis", "recommendation": "No recommendation."}'
+            }
+        }]
+    }
+    mock_post.return_value.json.return_value = mock_response
+
+    result = analyze_mood_from_image(test_image_path)
+
+    # assert that required keys exist
+    assert "emotion" in result
+    assert "explanation" in result
+    assert "recommendation" in result
+
+    # assert that responses align with the one provided in the prompt
+    assert result["emotion"] == "none"
+    assert "ambiguous" in result["explanation"].lower()
+    assert "no recommendation." in result["recommendation"].lower()
+
+@patch("app.requests.post")
+def test_api_exception(mock_post, test_image_path):
+    """
+    Test if there is an error with the API
+    """
+
+    mock_post.side_effect = requests.RequestException("API call failed")
+
+    result = analyze_mood_from_image(test_image_path)
+
     assert result["emotion"] == "error"
-    assert "not found" in result["explanation"].lower()
+    assert "api error" in result["explanation"].lower()
+    assert result["recommendation"] == ""
 
+@pytest.fixture
+def client():
+    """
+    Fixture to provide a test client for the Flask app.
+    """
+    from app import app
+    with app.test_client() as client:
+        yield client
 
-def test_return_structure_keys():
-    """Test that a result always includes expected keys: emotion, explanation, recommendation."""
-    result = app.analyze_mood_from_image("nonexistent.jpg")
-    assert all(key in result for key in ["emotion", "explanation", "recommendation"])
+def test_analyze_endpoint_valid_file(client, test_image_path):
+    """
+    Test the analyze endpoint with a valid image file.
+    """
+    
+    with open(test_image_path, 'rb') as img_file:
 
+        response = client.post('/analyze', json={"filename": "happy-guy.jpg"})
+        assert response.status_code == 200
+        json_data = response.get_json()
 
-def test_mock_valid_image(monkeypatch):
-    """Test analyze_mood_from_image returns mocked values for a valid image."""
+        assert "emotion" in json_data
+        assert "explanation" in json_data
+        assert "recommendation" in json_data
 
-    def mock_analyze(_):
-        return {
-            "emotion": "happy",
-            "explanation": "Detected smiling face",
-            "recommendation": "Share your happiness with a friend!"
-        }
+def test_analyze_endpoint_invalid_file(client):
+    """
+    Test the analyze endpoint with invalid/missing filename.
+    """
 
-    monkeypatch.setattr(app, "analyze_mood_from_image", mock_analyze)
-    result = app.analyze_mood_from_image("valid.jpg")
-
-    assert result["emotion"] == "happy"
-    assert "smiling" in result["explanation"].lower()
+    # use invalid file
+    response = client.post('/analyze', json={})
+    assert response.status_code == 400
+    assert "error" in response.get_json()
