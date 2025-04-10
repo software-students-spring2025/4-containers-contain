@@ -129,15 +129,20 @@ def get_activities():
     category = data.get("category", "social")
 
     prompt = f"""
-    Suggest 3 {category.lower()} activities for someone who feels {emotion}.
-    Keep each suggestion under 15 words and include a fun emoji for each one.
-    Return them as a numbered list with no extra explanation.
+    You're helping someone who feels {emotion}. First, write a friendly, short motivational sentence
+    that acknowledges their mood. Then, suggest 3 {category} activities — each under 15 words,
+    with an emoji, in a numbered list. Do NOT include any extra explanation or closing remarks.
+    Return everything in this format exactly:
+
+    Line 1: your motivational message
+    Line 2+: the 3 activities
     """
 
-    # Call OpenAI API here
     suggestions = call_chatgpt_api(prompt)
-    return jsonify({"activities": suggestions})
-
+    lines = suggestions.strip().split("\n")
+    intro = lines[0].strip()
+    activities = "\n".join(line.strip() for line in lines[1:])
+    return jsonify({"intro": intro, "activities": activities})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001)
