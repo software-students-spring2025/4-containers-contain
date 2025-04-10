@@ -72,6 +72,7 @@ def test_index_post_success(mock_insert_one, mock_requests_post, client_instance
     assert "timestamp" in inserted_data
     assert isinstance(inserted_data["timestamp"], datetime)
 
+
 @patch("app.requests.post")
 def test_get_activities_fail(mock_requests_post, client_instance):
     """
