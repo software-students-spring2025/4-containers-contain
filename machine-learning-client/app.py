@@ -18,7 +18,9 @@ UPLOAD_FOLDER = "/shared/uploads"
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
+)
 HEADERS = {
     "Authorization": f"Bearer {OPENAI_API_KEY}",
     "Content-Type": "application/json",
@@ -39,7 +41,11 @@ def analyze_mood_from_image(image_path):
             b64_image = base64.b64encode(f.read()).decode("utf-8")
     except FileNotFoundError:
         logging.error("Image file not found: %s", image_path)
-        return {"emotion": "error", "explanation": "Image file not found.", "recommendation": ""}
+        return {
+            "emotion": "error",
+            "explanation": "Image file not found.",
+            "recommendation": "",
+        }
 
     prompt_text = (
         "Analyze the facial expression in the provided image. "
@@ -85,23 +91,40 @@ def analyze_mood_from_image(image_path):
             raw_output = re.sub(r"\s*```$", "", raw_output)
         try:
             analysis = json.loads(raw_output)
-            if "emotion" in analysis and "explanation" in analysis and "recommendation" in analysis:
+            if (
+                "emotion" in analysis
+                and "explanation" in analysis
+                and "recommendation" in analysis
+            ):
                 return analysis
             logging.error("Response JSON missing required keys: %s", analysis)
-            return {"emotion": "error", "explanation": "Incomplete response from analysis.", "recommendation": ""}
+            return {
+                "emotion": "error",
+                "explanation": "Incomplete response from analysis.",
+                "recommendation": "",
+            }
         except json.JSONDecodeError:
             logging.error("Failed to parse JSON from GPT response.")
-            return {"emotion": "error", "explanation": "Response could not be parsed as JSON.", "recommendation": ""}
+            return {
+                "emotion": "error",
+                "explanation": "Response could not be parsed as JSON.",
+                "recommendation": "",
+            }
     except requests.RequestException as e:
         logging.error("Failed to analyze image %s: %s", image_path, e)
-        return {"emotion": "error", "explanation": "Unable to analyze mood due to an API error.", "recommendation": ""}
+        return {
+            "emotion": "error",
+            "explanation": "Unable to analyze mood due to an API error.",
+            "recommendation": "",
+        }
+
 
 def call_chatgpt_api(prompt):
     response = requests.post(
         "https://api.openai.com/v1/chat/completions",
         headers={
             "Authorization": f"Bearer {os.getenv('OPENAI_API_KEY')}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         },
         json={
             "model": "gpt-4o",
@@ -110,6 +133,7 @@ def call_chatgpt_api(prompt):
         },
     )
     return response.json()["choices"][0]["message"]["content"]
+
 
 @app.route("/analyze", methods=["POST"])
 def analyze_endpoint():
@@ -121,6 +145,7 @@ def analyze_endpoint():
     image_path = os.path.join(UPLOAD_FOLDER, filename)
     result = analyze_mood_from_image(image_path)
     return jsonify(result)
+
 
 @app.route("/get-activities", methods=["POST"])
 def get_activities():
@@ -143,6 +168,7 @@ def get_activities():
     intro = lines[0].strip()
     activities = "\n".join(line.strip() for line in lines[1:])
     return jsonify({"intro": intro, "activities": activities})
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001)

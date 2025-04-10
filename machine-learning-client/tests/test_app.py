@@ -47,9 +47,7 @@ def test_valid_image(mock_post, test_image_path):
     assert "explanation" in result
     assert "recommendation" in result
     assert "happy" in result["emotion"]
-    assert (
-        "smiling" in result["explanation"] or "smile" in result["explanation"]
-    )
+    assert "smiling" in result["explanation"] or "smile" in result["explanation"]
     assert isinstance(result["recommendation"], str)
     assert len(result["recommendation"]) > 0
 
