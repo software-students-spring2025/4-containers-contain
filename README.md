@@ -6,13 +6,6 @@
 
 Our project, Mood Helper, seeks to address mental health and help people brighten up their mood! The web app has the capability to detect users' emotions from user uploaded images, and gives activities suggestions to help address any concerns.
 
-This project demonstrates a containerized system consisting of three interdependent subsystems:
-- **Web App**: A Flask-based interface that allows users to upload images and view mood analysis results.
-- **Machine Learning Client**: A Python service that analyzes uploaded images using the OpenAI API to detect emotions.
-- **Database**: A MongoDB instance that stores image metadata and analysis results for both the web app and the ML client.
-
-All components run in separate Docker containers and communicate with each other through a Docker network managed by Docker Compose.
-
 ## Team Members
 
 - [Gilad](https://github.com/giladspitzer)
@@ -30,11 +23,13 @@ All components run in separate Docker containers and communicate with each other
 ### Steps to Run the Application
 
 1. **Clone the Repository**
+
    ```bash
    git clone https://github.com/software-students-spring2025/4-containers-contain.git
    ```
 
 2. **Set Up Environment Variables**
+
    - In the `machine-learning-client` directory, create a `.env` file.
    - Use the provided `env.example` as a template:
      ```env
@@ -51,7 +46,6 @@ All components run in separate Docker containers and communicate with each other
    - The web app will be available at [http://localhost:5050](http://localhost:5050).
    - The ML client listens on [http://localhost:5001](http://localhost:5001).
 
-
 ### Environment Variables
 
 - **Machine Learning Client (`machine-learning-client/.env`)**
@@ -61,7 +55,6 @@ All components run in separate Docker containers and communicate with each other
 
 - **MongoDB** is deployed as a container using the official [mongo](https://hub.docker.com/_/mongo) image.
 - Data is stored persistently using the Docker volume `mongo_data` as defined in the `docker-compose.yml` file.
-
 
 ## Continuous Integration
 
