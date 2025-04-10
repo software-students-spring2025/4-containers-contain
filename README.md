@@ -58,7 +58,7 @@ Our project, Mood Helper, seeks to address mental health and help people brighte
 
 ## Continuous Integration
 
-This repository is integrated with GitHub Actions. The badges at the top of this file display the latest build and test statuses for both the web app and the machine learning client subsystems. The CI runs unit tests as well as lints.
+- This repository is integrated with GitHub Actions. The badges at the top of this file display the latest build and test statuses for both the web app and the machine learning client subsystems. The CI runs unit tests as well as lints.
 
 ## Additional Notes
 
