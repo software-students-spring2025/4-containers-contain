@@ -1,11 +1,6 @@
-[![Lint](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/lint.yml/badge.svg)](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/lint.yml)
+[![Web App CI](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/ci.yml/badge.svg?job=test_web_app)](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/ci.yml?job=test_web_app)
 
-Web App CI 
-- [![Web App CI](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/ci.yml/badge.svg?job=test_web_app)](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/ci.yml?job=test_web_app)
-
-ML Client CI:
-- [![ML Client CI](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/ci.yml/badge.svg?job=test_ml_client)](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/ci.yml?job=test_ml_client)
-
+[![ML Client CI](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/ci.yml/badge.svg?job=test_ml_client)](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/ci.yml?job=test_ml_client)
 
 # Containerized App Exercise: Mood Helper
 
@@ -63,7 +58,7 @@ Our project, Mood Helper, seeks to address mental health and help people brighte
 
 ## Continuous Integration
 
-This repository is integrated with GitHub Actions. The badges at the top of this file display the latest build and test statuses for both the web app and the machine learning client subsystems. The CI runs unit tests as well as lints.
+- This repository is integrated with GitHub Actions. The badges at the top of this file display the latest build and test statuses for both the web app and the machine learning client subsystems. The CI runs unit tests as well as lints.
 
 ## Additional Notes
 
