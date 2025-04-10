@@ -9,33 +9,50 @@ on:
       - "**"
 
 jobs:
-  test:
+  test_web_app:
+    name: Web App Tests
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        subdir: [web-app, machine-learning-client]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Set up Python 3.10
         uses: actions/setup-python@v2
         with:
           python-version: "3.10"
-
       - name: Install pipenv
         run: pip install pipenv
-
       - name: Install dependencies
         run: pipenv install --dev
-        working-directory: ${{ matrix.subdir }}
-
+        working-directory: web-app
       - name: Run tests
         run: pipenv run pytest --maxfail=1 --disable-warnings -q
-        working-directory: ${{ matrix.subdir }}
-
+        working-directory: web-app
       - name: Run coverage
-        working-directory: ${{ matrix.subdir }}
+        working-directory: web-app
+        run: |
+          pipenv run coverage run -m pytest
+          pipenv run coverage report --fail-under=80
+
+  test_ml_client:
+    name: ML Client Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
+      - name: Install pipenv
+        run: pip install pipenv
+      - name: Install dependencies
+        run: pipenv install --dev
+        working-directory: machine-learning-client
+      - name: Run tests
+        run: pipenv run pytest --maxfail=1 --disable-warnings -q
+        working-directory: machine-learning-client
+      - name: Run coverage
+        working-directory: machine-learning-client
         run: |
           pipenv run coverage run -m pytest
           pipenv run coverage report --fail-under=80

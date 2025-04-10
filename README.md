@@ -1,6 +1,11 @@
-[![Web App CI](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/lint.yml/badge.svg)](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/lint.yml)
+[![Lint](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/lint.yml/badge.svg)](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/lint.yml)
 
-[![ML Client CI](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/lint.yml/badge.svg)](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/lint.yml)
+Web App CI 
+- [![Web App CI](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/ci.yml/badge.svg?job=test_web_app)](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/ci.yml?job=test_web_app)
+
+ML Client CI:
+- [![ML Client CI](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/ci.yml/badge.svg?job=test_ml_client)](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/ci.yml?job=test_ml_client)
+
 
 # Containerized App Exercise: Mood Helper
 
