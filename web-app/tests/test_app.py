@@ -95,4 +95,4 @@ def test_activities_page(client_instance):
 
     # assert that the correct emotion is in the response data
     assert response.status_code == 200
-    assert b"happy" in response.data 
+    assert b"happy" in response.data
