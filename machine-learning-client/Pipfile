@@ -9,6 +9,7 @@ pymongo = "*"
 requests = "*"
 python-dotenv = "*"
 werkzeug = "*"
+exceptiongroup = "*"
 
 [dev-packages]
 pylint = "*"
