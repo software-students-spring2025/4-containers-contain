@@ -18,6 +18,7 @@ pytest = "*"
 pytest-flask = "*"
 coverage = "*"
 tomli = "*"
+typing-extensions = "*"
 
 [requires]
 python_version = "3.10"
