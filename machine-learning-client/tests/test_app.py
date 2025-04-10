@@ -4,9 +4,9 @@ This module tests the analyze_mood_from_image function.
 """
 
 import os
+from unittest.mock import patch
 import pytest
 import requests
-from unittest.mock import patch
 from app import app, analyze_mood_from_image
 
 
