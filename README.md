@@ -2,7 +2,9 @@
 
 [![ML Client CI](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/lint.yml/badge.svg)](https://github.com/software-students-spring2025/4-containers-contain/actions/workflows/lint.yml)
 
-# Containerized App Exercise
+# Containerized App Exercise: Mood Helper
+
+Our project, Mood Helper, seeks to address mental health and help people brighten up their mood! The web app has the capability to detect users' emotions from user uploaded images, and gives activities suggestions to help address any concerns.
 
 This project demonstrates a containerized system consisting of three interdependent subsystems:
 - **Web App**: A Flask-based interface that allows users to upload images and view mood analysis results.
