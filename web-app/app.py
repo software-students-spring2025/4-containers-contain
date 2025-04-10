@@ -1,7 +1,14 @@
 import os
 from datetime import datetime
 
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    send_from_directory,
+)
 from pymongo import MongoClient
 from werkzeug.utils import secure_filename
 import requests
@@ -71,25 +78,24 @@ def index():
     results = list(collection.find().sort("timestamp", -1).limit(10))
     return render_template("index.html", moods=results)
 
+
 @app.route("/activities")
 def activities():
     emotion = request.args.get("emotion", "neutral")
     return render_template("activities.html", emotion=emotion)
+
 
 @app.route("/get-activities", methods=["POST"])
 def proxy_get_activities():
     """Proxy the activity suggestion request to the ML client."""
     try:
         response = requests.post(
-            "http://ml-client:5001/get-activities",
-            json=request.get_json(),
-            timeout=30
+            "http://ml-client:5001/get-activities", json=request.get_json(), timeout=30
         )
         response.raise_for_status()
         return response.json()
     except requests.RequestException as e:
         return {"activities": f"Failed to retrieve activities: {str(e)}"}, 500
-
 
 
 if __name__ == "__main__":
