@@ -7,6 +7,7 @@ import io
 import tempfile
 from datetime import datetime
 from unittest.mock import patch, MagicMock
+import requests
 import pytest
 
 os.environ["UPLOAD_FOLDER"] = tempfile.mkdtemp()
@@ -70,3 +71,29 @@ def test_index_post_success(mock_insert_one, mock_requests_post, client_instance
     # Check that a timestamp is included.
     assert "timestamp" in inserted_data
     assert isinstance(inserted_data["timestamp"], datetime)
+
+
+@patch("app.requests.post")
+def test_get_activities_fail(mock_requests_post, client_instance):
+    """
+    Test when get activities fails to offer suggestions.
+    """
+    mock_requests_post.side_effect = requests.RequestException("ML client timeout")
+
+    response = client_instance.post(
+        "/get-activities", json={"emotion": "happy"}, follow_redirects=False
+    )
+    # assert if status is 500 and message includes specified text
+    assert response.status_code == 500
+    assert b"Failed to retrieve activities" in response.data
+
+
+def test_activities_page(client_instance):
+    """
+    Test if the activities page loads with the correct emotion.
+    """
+    response = client_instance.get("/activities?emotion=happy")
+
+    # assert that the correct emotion is in the response data
+    assert response.status_code == 200
+    assert b"happy" in response.data
